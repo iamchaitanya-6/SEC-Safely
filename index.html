@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEC-safely - Gateway Authentication</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Corporate Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen text-gray-800 font-sans antialiased">
+
+    <!-- GATEWAY AUTHENTICATION FRAME -->
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl border border-gray-200 shadow-xl space-y-6">
+        
+        <!-- Logo Branding Header -->
+        <div class="flex flex-col items-center space-y-3 text-center">
+            <div class="bg-blue-600 text-white p-3.5 rounded-2xl shadow-md inline-block">
+                <i class="fas fa-shield-halved text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">Enterprise SOC Gateway</h1>
+                <p class="text-xs font-medium text-gray-400 uppercase tracking-wider mt-1">Authorized Access Only</p>
+            </div>
+        </div>
+
+        <!-- Alert Messaging Placeholder -->
+        <div id="auth-alert" class="hidden text-xs font-semibold p-3 rounded-lg border"></div>
+
+        <!-- Login Form Element Matrix -->
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Operator Operator ID</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <i class="fas fa-user-shield text-sm"></i>
+                    </span>
+                    <input type="text" id="username" placeholder="Enter root identity" required
+                           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition shadow-sm text-gray-900">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Authorization Key</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                        <i class="fas fa-key text-sm"></i>
+                    </span>
+                    <input type="password" id="password" placeholder="••••••••" required
+                           class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition shadow-sm text-gray-900">
+                </div>
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl transition shadow-md flex items-center justify-center space-x-2">
+                <i class="fas fa-right-to-bracket"></i>
+                <span>Validate Credentials</span>
+            </button>
+        </form>
+
+        <div class="text-center pt-2 border-t border-gray-100">
+            <span class="text-[10px] font-mono font-bold text-gray-400 tracking-widest uppercase">System Control Unit</span>
+        </div>
+    </div>
+
+    <!-- Active Authorization Routine Scripts -->
+    <script src="auth.js"></script>
+</body>
+</html>

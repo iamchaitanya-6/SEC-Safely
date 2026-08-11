@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEC SAFELY - Real-Time Enterprise SOC Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-950 text-gray-100 flex min-h-screen font-sans">
+
+    <aside class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col justify-between shrink-0">
+        <div>
+            <div class="p-5 border-b border-gray-800 flex items-center gap-3">
+                <span class="text-2xl">🛡️</span>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-wide">SEC SAFELY</h1>
+                    <p class="text-xs text-gray-400">Enterprise SIEM & SOC</p>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="#" onclick="showSection('dashboard')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="showSection('threat-hunting')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span>🎯</span> <span>Threat Hunting & Rules</span>
+                </a>
+                <a href="#" onclick="showSection('blocked-ips')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span class="text-red-500">🚫</span> <span>Blocked IP Addresses</span>
+                </a>
+                <a href="#" onclick="showSection('compliance')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span>📑</span> <span>Compliance Reports</span>
+                </a>
+                <a href="#" onclick="showSection('assets')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span>🖥️</span> <span>Asset Management</span>
+                </a>
+                <a href="#" onclick="showSection('settings')" class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors">
+                    <span>⚙️</span> <span>Settings & Alerts</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-gray-800 text-xs text-gray-500 text-center font-mono">
+            Node: 10.206.31.192 | Port: 5000
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto">
+        
+        <div id="dashboard-section" class="content-section p-6 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-900 border border-red-900/40 p-5 rounded-xl shadow-lg flex justify-between items-center">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-red-400 font-semibold">Critical Threats (L8+)</p>
+                        <h3 id="kpi-critical" class="text-3xl font-bold text-white mt-1">0</h3>
+                    </div>
+                    <span class="text-3xl">🔥</span>
+                </div>
+
+                <div class="bg-gray-900 border border-yellow-900/40 p-5 rounded-xl shadow-lg flex justify-between items-center">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-yellow-400 font-semibold">Medium Warnings (L5-7)</p>
+                        <h3 id="kpi-warnings" class="text-3xl font-bold text-white mt-1">0</h3>
+                    </div>
+                    <span class="text-3xl">⚠️</span>
+                </div>
+
+                <div class="bg-gray-900 border border-emerald-900/40 p-5 rounded-xl shadow-lg flex justify-between items-center">
+                    <div>
+                        <p class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Node Status</p>
+                        <h3 class="text-xl font-bold text-emerald-400 mt-1">ONLINE</h3>
+                    </div>
+                    <span class="text-3xl">🟢</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl shadow-xl">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Live Operational Ingestion Terminal</h2>
+                        <p class="text-xs text-gray-400 font-mono">Polling http://10.206.31.192:5000/api/wazuh/alerts</p>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <select id="severity-filter" onchange="fetchAlerts()" class="bg-gray-800 border border-gray-700 text-xs text-gray-200 rounded-lg px-3 py-2">
+                            <option value="all">All Severity Levels</option>
+                            <option value="critical">Critical Only (Level 8+)</option>
+                            <option value="warning">Medium Only (Level 5-7)</option>
+                        </select>
+                        <button onclick="fetchAlerts()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 py-2 rounded-lg font-semibold transition-all">
+                            🔄 Refresh Logs
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-800/80 text-xs uppercase text-gray-400 border-b border-gray-700">
+                            <tr>
+                                <th class="py-3 px-4">Timestamp</th>
+                                <th class="py-3 px-4">Level</th>
+                                <th class="py-3 px-4">Rule Description</th>
+                                <th class="py-3 px-4">Source IP</th>
+                                <th class="py-3 px-4 text-center">Active Mitigation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody" class="divide-y divide-gray-800 font-mono text-xs">
+                            <tr>
+                                <td colspan="5" class="text-center py-6 text-gray-500">Connecting to SEC SAFELY API Middleware...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="threat-hunting-section" class="content-section hidden p-6 space-y-6">
+            <h2 class="text-2xl font-bold text-white">🎯 Threat Hunting & Rules Engine</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-red-400 mb-2">Rule 5763 - SSH Brute Force Detection</h3>
+                    <p class="text-xs text-gray-400 mb-3">Fires on repeated invalid authentication attempts within a short timeframe.</p>
+                    <span class="bg-red-900/40 text-red-300 border border-red-700 text-xs px-2.5 py-1 rounded">Level 10 (Critical)</span>
+                </div>
+                <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-yellow-400 mb-2">Rule 5712 - PAM Authentication Failure</h3>
+                    <p class="text-xs text-gray-400 mb-3">Monitors system authentication logs for failed password attempts.</p>
+                    <span class="bg-yellow-900/40 text-yellow-300 border border-yellow-700 text-xs px-2.5 py-1 rounded">Level 5 (Medium)</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="blocked-ips-section" class="content-section hidden p-6 space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <span class="text-red-500">🛡️</span> Active Blocked IP Management
+                    </h2>
+                    <p class="text-gray-400 text-sm mt-1">Manage network access control and release firewall drop rules.</p>
+                </div>
+                <button onclick="fetchBlockedIps()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg text-sm border border-gray-700 flex items-center gap-2">
+                    🔄 Refresh Rules
+                </button>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-gray-800 text-xs uppercase text-gray-400 border-b border-gray-700">
+                            <tr>
+                                <th class="py-3 px-4">Target IP Address</th>
+                                <th class="py-3 px-4">Block Timestamp</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4">Mitigation Reason</th>
+                                <th class="py-3 px-4 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blocked-ips-tbody" class="divide-y divide-gray-800">
+                            <tr>
+                                <td colspan="5" class="text-center py-6 text-gray-500">Loading active firewall rules...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="compliance-section" class="content-section hidden p-6 space-y-6">
+            <h2 class="text-2xl font-bold text-white">📑 Compliance & Audit Reports</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl space-y-4">
+                <div>
+                    <label class="block text-xs uppercase text-gray-400 mb-1">Report Title</label>
+                    <input type="text" id="report-title" value="Security Incident Audit Summary" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white">
+                </div>
+                <button onclick="generatePDFReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
+                    📥 Download PDF Audit Report
+                </button>
+            </div>
+        </div>
+
+        <div id="assets-section" class="content-section hidden p-6 space-y-6">
+            <h2 class="text-2xl font-bold text-white">🖥️ Monitored Assets</h2>
+            <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-white">Kali-Security-Node (SIEM Engine)</h4>
+                        <p class="text-xs font-mono text-gray-400">IP: 10.206.31.192 | Agent ID: 000</p>
+                    </div>
+                    <span class="bg-emerald-900/50 text-emerald-400 border border-emerald-700 text-xs px-2.5 py-1 rounded-full">ACTIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-section" class="content-section hidden p-6 space-y-6">
+            <h2 class="text-2xl font-bold text-white">⚙️ API & Network Settings</h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl space-y-3 font-mono text-xs">
+                <p class="text-gray-300"><strong>Target IP:</strong> 10.206.31.192</p>
+                <p class="text-gray-300"><strong>Backend API:</strong> http://10.206.31.192:5000</p>
+                <p class="text-gray-300"><strong>Telegram Bot API:</strong> Configured (@SEC_safely_bot)</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
