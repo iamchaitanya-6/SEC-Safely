@@ -1,3 +1,5 @@
+/* SEC SAFELY Custom Utility & Responsive Layout Styles */
+
 .tab-content {
     animation: fadeIn 0.25s ease-in-out;
 }
@@ -11,6 +13,31 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Custom Scrollbars for High-Density Tables */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #030712;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1f2937;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #374151;
+}
+
+/* Custom datetime-local picker styling for dark mode */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
 }
 
 @media (min-width: 768px) {

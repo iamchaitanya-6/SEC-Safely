@@ -168,30 +168,127 @@
         </div>
 
         <div id="compliance-section" class="content-section hidden p-6 space-y-6">
-            <h2 class="text-2xl font-bold text-white">📑 Compliance & Audit Reports</h2>
-            <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl max-w-xl space-y-4">
-                <div>
-                    <label class="block text-xs uppercase text-gray-400 mb-1">Report Title</label>
-                    <input type="text" id="report-title" value="Security Incident Audit Summary" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-sm text-white">
+            <div>
+                <h2 class="text-2xl font-bold text-white">📑 Compliance & Incident Audit Reports</h2>
+                <p class="text-gray-400 text-sm mt-1">Select a custom date-time window or pick a quick preset to export a professional forensic audit PDF report.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl space-y-5 shadow-xl">
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Document Report Title</label>
+                        <input type="text" id="report-title" value="Security Incident Forensic Audit Summary" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">From Date & Time</label>
+                            <input type="datetime-local" id="report-from-date" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">To Date & Time</label>
+                            <input type="datetime-local" id="report-to-date" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-sm text-white font-mono focus:outline-none focus:border-blue-500 transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Quick Time Presets</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="setReportTimePreset('1h')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-3 py-2 rounded-lg font-mono transition">Last 1 Hour</button>
+                            <button type="button" onclick="setReportTimePreset('24h')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-3 py-2 rounded-lg font-mono transition">Last 24 Hours</button>
+                            <button type="button" onclick="setReportTimePreset('7d')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-3 py-2 rounded-lg font-mono transition">Last 7 Days</button>
+                            <button type="button" onclick="setReportTimePreset('all')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 text-xs px-3 py-2 rounded-lg font-mono transition">All Recorded Time</button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-800 flex justify-between items-center">
+                        <span class="text-xs text-gray-400 font-mono" id="report-window-preview">Window: Selected Range</span>
+                        <button onclick="generatePDFReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-lg text-sm font-bold tracking-wider uppercase flex items-center gap-2 shadow-lg transition-all">
+                            <span>📄</span> Compile & Download Audit PDF
+                        </button>
+                    </div>
                 </div>
-                <button onclick="generatePDFReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
-                    📥 Download PDF Audit Report
-                </button>
+
+                <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 border-b border-gray-800 pb-2">PDF Report Structure</h3>
+                    <ul class="text-xs text-gray-400 space-y-3">
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span><strong>Executive SIEM Summary:</strong> High-level statistics on critical threats, warnings, and low-level alerts.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span><strong>Attacker IP Forensics:</strong> Unique critical source IPs identified during the selected time-frame.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span><strong>Detailed Telemetry Table:</strong> Complete breakdown of timestamps, rule descriptions, and severity levels.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span><strong>SOC Compliance Seal:</strong> Formatted for ISO 27001 & SOC 2 audit readiness.</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <div id="assets-section" class="content-section hidden p-6 space-y-6">
-            <h2 class="text-2xl font-bold text-white">🖥️ Monitored Assets</h2>
-            <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-white">🖥️ Monitored Assets & Web Applications</h2>
+            <p class="text-xs text-gray-400 mt-1">Real-time inventory of connected endpoints, servers, and web portals protected by SEC SAFELY.</p>
+        </div>
+        <span class="bg-blue-900/40 text-blue-400 border border-blue-700/50 text-xs px-3 py-1.5 rounded-lg font-mono font-bold">
+            Total Assets: 2
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-xl hover:border-gray-700 transition">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🐧</span>
                     <div>
-                        <h4 class="font-bold text-white">Kali-Security-Node (SIEM Engine)</h4>
-                        <p class="text-xs font-mono text-gray-400">IP: 10.206.31.192 | Agent ID: 000</p>
+                        <h4 class="font-bold text-white text-base">Kali-Security-Node</h4>
+                        <p class="text-xs font-mono text-gray-400">Target Host & SIEM Core</p>
                     </div>
-                    <span class="bg-emerald-900/50 text-emerald-400 border border-emerald-700 text-xs px-2.5 py-1 rounded-full">ACTIVE</span>
                 </div>
+                <span class="bg-emerald-900/50 text-emerald-400 border border-emerald-700 text-xs px-2.5 py-1 rounded-full font-mono font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+                </span>
+            </div>
+            <div class="border-t border-gray-800 pt-3 mt-2 grid grid-cols-2 gap-2 text-xs font-mono text-gray-400">
+                <p>IP: <span class="text-gray-200">10.206.31.192</span></p>
+                <p>Port: <span class="text-gray-200">5000 (API)</span></p>
+                <p>Engine: <span class="text-gray-200">Wazuh Manager</span></p>
+                <p>Agent ID: <span class="text-gray-200">000 (Master)</span></p>
             </div>
         </div>
+
+        <div class="bg-gray-900 border border-blue-900/50 rounded-xl p-5 shadow-xl hover:border-blue-700 transition">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🌐</span>
+                    <div>
+                        <h4 class="font-bold text-white text-base">Netlify Web Login Gateway</h4>
+                        <p class="text-xs font-mono text-gray-400">Cloud Web Application Portal</p>
+                    </div>
+                </div>
+                <span class="bg-blue-900/50 text-blue-400 border border-blue-700 text-xs px-2.5 py-1 rounded-full font-mono font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> MONITORED
+                </span>
+            </div>
+            <div class="border-t border-gray-800 pt-3 mt-2 grid grid-cols-2 gap-2 text-xs font-mono text-gray-400">
+                <p class="col-span-2 truncate">URL: <a href="https://loquacious-pastelito-7c884f.netlify.app/" target="_blank" class="text-blue-400 underline">https://loquacious-pastelito-7c884f.netlify.app/</a></p>
+                <p>WAF Policy: <span class="text-gray-200">Brute Force (3x)</span></p>
+                <p>Telemetry: <span class="text-emerald-400">Active Pipeline</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>
 
         <div id="settings-section" class="content-section hidden p-6 space-y-6">
             <h2 class="text-2xl font-bold text-white">⚙️ API & Network Settings</h2>
